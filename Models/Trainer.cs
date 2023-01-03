@@ -9,7 +9,7 @@ namespace Proiect.Models
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Display(Name = "Trainer")]
+        [Display(Name = "Full Name")]
         public string FullName
         {
             get
@@ -19,7 +19,7 @@ namespace Proiect.Models
         }
 
         public string Phone { get; set; }
-        public ICollection<TrainerCategory>? TrainerCategories { get; set; }
+        public List<TrainerCategory> TrainerCategories { get; set; }
         public ICollection<Gym>? Gyms { get; set; } //navigation property
 
     }

@@ -11,6 +11,11 @@ namespace Proiect.Models
         public int? GymID { get; set; }
         public Gym? Gym { get; set; }  //navigation property
         [DataType(DataType.Date)]
+
+        [Display(Name= "Subscription expiration date")]
         public DateTime ReturnDate { get; set; }
+
+        //public int? TrainerID { get; set; }
+        //public Trainer? Trainer { get; set; }  //navigation property
     }
 }

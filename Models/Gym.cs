@@ -16,10 +16,13 @@ namespace Proiect.Models
 
         [Column(TypeName = "decimal(6, 2)")]
         [Range(0.01, 500)]
+
+        [Display(Name = "Trainer's price")]
         public decimal Price { get; set; }
 
         public int? TrainerID { get; set; }
         public Trainer? Trainer { get; set; } //navigation property
         public Borrowing? Borrowing { get; set; } //navigation property
+        //public ICollection<Trainer>? Trainers { get; set; } //navigation property
     }
 }
