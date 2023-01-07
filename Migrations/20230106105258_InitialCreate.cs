@@ -5,10 +5,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Proiect.Migrations
 {
-    public partial class GymCategory : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Client",
                 columns: table => new
@@ -17,7 +30,7 @@ namespace Proiect.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Adress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Adress = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -27,27 +40,63 @@ namespace Proiect.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GymCategory",
+                name: "Trainer",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GymID = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trainer", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Gym",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Adress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    TrainerID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Gym", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Gym_Trainer_TrainerID",
+                        column: x => x.TrainerID,
+                        principalTable: "Trainer",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrainerCategory",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TrainerID = table.Column<int>(type: "int", nullable: false),
                     CategoryID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GymCategory", x => x.ID);
+                    table.PrimaryKey("PK_TrainerCategory", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_GymCategory_Category_CategoryID",
+                        name: "FK_TrainerCategory_Category_CategoryID",
                         column: x => x.CategoryID,
                         principalTable: "Category",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GymCategory_Gym_GymID",
-                        column: x => x.GymID,
-                        principalTable: "Gym",
+                        name: "FK_TrainerCategory_Trainer_TrainerID",
+                        column: x => x.TrainerID,
+                        principalTable: "Trainer",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -85,17 +134,24 @@ namespace Proiect.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Borrowing_GymID",
                 table: "Borrowing",
-                column: "GymID");
+                column: "GymID",
+                unique: true,
+                filter: "[GymID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GymCategory_CategoryID",
-                table: "GymCategory",
+                name: "IX_Gym_TrainerID",
+                table: "Gym",
+                column: "TrainerID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainerCategory_CategoryID",
+                table: "TrainerCategory",
                 column: "CategoryID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GymCategory_GymID",
-                table: "GymCategory",
-                column: "GymID");
+                name: "IX_TrainerCategory_TrainerID",
+                table: "TrainerCategory",
+                column: "TrainerID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -104,10 +160,19 @@ namespace Proiect.Migrations
                 name: "Borrowing");
 
             migrationBuilder.DropTable(
-                name: "GymCategory");
+                name: "TrainerCategory");
 
             migrationBuilder.DropTable(
                 name: "Client");
+
+            migrationBuilder.DropTable(
+                name: "Gym");
+
+            migrationBuilder.DropTable(
+                name: "Category");
+
+            migrationBuilder.DropTable(
+                name: "Trainer");
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Proiect.Pages.Trainers
                 return NotFound();
             }
 
-            var trainer = await _context.Trainer.FirstOrDefaultAsync(m => m.ID == id);
+            var trainer = await _context.Trainer.Include("TrainerCategories").FirstOrDefaultAsync(m => m.ID == id);
 
             if (trainer == null)
             {

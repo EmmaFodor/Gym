@@ -19,9 +19,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Borrowing[0].Gym)
             </th>
-            <th>
-                @Html.DisplayNameFor(model=>model.Borrowing[0].Gym.Trainer)
-            </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.Borrowing[0].ReturnDate)
             </th>
@@ -36,9 +34,6 @@
             </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Gym.Borrowing.Gym.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Gym.Borrowing.Gym.Trainer.FullName)
                 </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ReturnDate)

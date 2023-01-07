@@ -32,7 +32,7 @@ namespace Proiect.Pages.Gyms
                 return NotFound();
             }
 
-            var gym = await _context.Gym.FirstOrDefaultAsync(m => m.ID == id);
+            var gym = await _context.Gym.Include("Trainer").FirstOrDefaultAsync(m => m.ID == id);
 
             if (gym == null)
             {

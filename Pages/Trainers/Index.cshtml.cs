@@ -24,6 +24,7 @@ namespace Proiect.Pages.Trainers
         public IList<TrainerCategory> TrainerCategories { get; set; }
         public TrainerData TrainerD { get; set; }
         public int TrainerID { get; set; }
+        public string CategorySort { get; set; }
         public int CategoryID { get; set; }
         public string NameSort { get; set; }
         public string CurrentFilter { get; set; }

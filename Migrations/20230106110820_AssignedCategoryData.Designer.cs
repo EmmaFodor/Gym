@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Proiect.Data;
 
@@ -11,13 +12,14 @@ using Proiect.Data;
 namespace Proiect.Migrations
 {
     [DbContext(typeof(ProiectContext))]
-    partial class ProiectContextModelSnapshot : ModelSnapshot
+    [Migration("20230106110820_AssignedCategoryData")]
+    partial class AssignedCategoryData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -30,10 +32,10 @@ namespace Proiect.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int?>("GymID")
+                    b.Property<int?>("ClientID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ClientID")
+                    b.Property<int?>("GymID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ReturnDate")
@@ -41,11 +43,11 @@ namespace Proiect.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("ClientID");
+
                     b.HasIndex("GymID")
                         .IsUnique()
                         .HasFilter("[GymID] IS NOT NULL");
-
-                    b.HasIndex("ClientID");
 
                     b.ToTable("Borrowing");
                 });
@@ -159,36 +161,34 @@ namespace Proiect.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int>("TrainerID")
-                        .HasColumnType("int");
-
                     b.Property<int>("CategoryID")
                         .HasColumnType("int");
 
+                    b.Property<int>("TrainerID")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("TrainerID");
-
                     b.HasIndex("CategoryID");
+
+                    b.HasIndex("TrainerID");
 
                     b.ToTable("TrainerCategory");
                 });
 
             modelBuilder.Entity("Proiect.Models.Borrowing", b =>
                 {
-                    b.HasOne("Proiect.Models.Gym", "Gym")
-                       .WithOne("Borrowing")
-                       .HasForeignKey("Proiect.Models.Borrowing", "GymID");
-
                     b.HasOne("Proiect.Models.Client", "Client")
                         .WithMany("Borrowings")
                         .HasForeignKey("ClientID");
 
-                    b.Navigation("Gym");
+                    b.HasOne("Proiect.Models.Gym", "Gym")
+                        .WithOne("Borrowing")
+                        .HasForeignKey("Proiect.Models.Borrowing", "GymID");
 
                     b.Navigation("Client");
 
+                    b.Navigation("Gym");
                 });
 
             modelBuilder.Entity("Proiect.Models.Gym", b =>
@@ -202,21 +202,21 @@ namespace Proiect.Migrations
 
             modelBuilder.Entity("Proiect.Models.TrainerCategory", b =>
                 {
-                    b.HasOne("Proiect.Models.Trainer", "Trainer")
-                       .WithMany("TrainerCategories")
-                       .HasForeignKey("TrainerID")
-                       .OnDelete(DeleteBehavior.Cascade)
-                       .IsRequired();
-
                     b.HasOne("Proiect.Models.Category", "Category")
                         .WithMany("TrainerCategories")
                         .HasForeignKey("CategoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Trainer");
+                    b.HasOne("Proiect.Models.Trainer", "Trainer")
+                        .WithMany("TrainerCategories")
+                        .HasForeignKey("TrainerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("Trainer");
                 });
 
             modelBuilder.Entity("Proiect.Models.Category", b =>
@@ -231,8 +231,6 @@ namespace Proiect.Migrations
 
             modelBuilder.Entity("Proiect.Models.Gym", b =>
                 {
-                    b.Navigation("TrainerCategories");
-
                     b.Navigation("Borrowing");
                 });
 

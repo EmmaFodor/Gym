@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Proiect.Data;
 using Proiect.Models;
@@ -28,7 +29,7 @@ namespace Proiect.Pages.Borrowings
                 return NotFound();
             }
 
-            var borrowing = await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
+            var borrowing = await _context.Borrowing.Include("Client").Include("Gym").FirstOrDefaultAsync(m => m.ID == id);
             if (borrowing == null)
             {
                 return NotFound();
@@ -37,6 +38,8 @@ namespace Proiect.Pages.Borrowings
             {
                 Borrowing = borrowing;
             }
+            ViewData["ClientID"] = new SelectList(_context.Client, "ID", "FullName");
+            ViewData["GymID"] = new SelectList(_context.Gym, "ID", "Name");
             return Page();
         }
     }

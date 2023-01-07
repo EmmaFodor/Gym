@@ -12,17 +12,45 @@ using Proiect.Data;
 namespace Proiect.Migrations
 {
     [DbContext(typeof(ProiectContext))]
-    [Migration("20221211133600_TrainerCategory")]
+    [Migration("20230106110656_TrainerCategory")]
     partial class TrainerCategory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Proiect.Models.Borrowing", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<int?>("ClientID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GymID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ClientID");
+
+                    b.HasIndex("GymID")
+                        .IsUnique()
+                        .HasFilter("[GymID] IS NOT NULL");
+
+                    b.ToTable("Borrowing");
+                });
 
             modelBuilder.Entity("Proiect.Models.Category", b =>
                 {
@@ -39,6 +67,36 @@ namespace Proiect.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Category");
+                });
+
+            modelBuilder.Entity("Proiect.Models.Client", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("Adress")
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Client");
                 });
 
             modelBuilder.Entity("Proiect.Models.Gym", b =>
@@ -118,10 +176,25 @@ namespace Proiect.Migrations
                     b.ToTable("TrainerCategory");
                 });
 
+            modelBuilder.Entity("Proiect.Models.Borrowing", b =>
+                {
+                    b.HasOne("Proiect.Models.Client", "Client")
+                        .WithMany("Borrowings")
+                        .HasForeignKey("ClientID");
+
+                    b.HasOne("Proiect.Models.Gym", "Gym")
+                        .WithOne("Borrowing")
+                        .HasForeignKey("Proiect.Models.Borrowing", "GymID");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Gym");
+                });
+
             modelBuilder.Entity("Proiect.Models.Gym", b =>
                 {
                     b.HasOne("Proiect.Models.Trainer", "Trainer")
-                        .WithMany()
+                        .WithMany("Gyms")
                         .HasForeignKey("TrainerID");
 
                     b.Navigation("Trainer");
@@ -151,8 +224,20 @@ namespace Proiect.Migrations
                     b.Navigation("TrainerCategories");
                 });
 
+            modelBuilder.Entity("Proiect.Models.Client", b =>
+                {
+                    b.Navigation("Borrowings");
+                });
+
+            modelBuilder.Entity("Proiect.Models.Gym", b =>
+                {
+                    b.Navigation("Borrowing");
+                });
+
             modelBuilder.Entity("Proiect.Models.Trainer", b =>
                 {
+                    b.Navigation("Gyms");
+
                     b.Navigation("TrainerCategories");
                 });
 #pragma warning restore 612, 618

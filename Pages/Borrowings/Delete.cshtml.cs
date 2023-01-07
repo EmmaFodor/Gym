@@ -32,7 +32,7 @@ namespace Proiect.Pages.Borrowings
                 return NotFound();
             }
 
-            var borrowing = await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
+            var borrowing = await _context.Borrowing.Include("Client").Include("Gym").FirstOrDefaultAsync(m => m.ID == id);
 
             if (borrowing == null)
             {

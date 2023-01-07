@@ -12,8 +12,8 @@ using Proiect.Data;
 namespace Proiect.Migrations
 {
     [DbContext(typeof(ProiectContext))]
-    [Migration("20221228093533_GymCategory")]
-    partial class GymCategory
+    [Migration("20230106105258_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,7 +45,9 @@ namespace Proiect.Migrations
 
                     b.HasIndex("ClientID");
 
-                    b.HasIndex("GymID");
+                    b.HasIndex("GymID")
+                        .IsUnique()
+                        .HasFilter("[GymID] IS NOT NULL");
 
                     b.ToTable("Borrowing");
                 });
@@ -76,7 +78,8 @@ namespace Proiect.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
                     b.Property<string>("Adress")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -123,29 +126,6 @@ namespace Proiect.Migrations
                     b.HasIndex("TrainerID");
 
                     b.ToTable("Gym");
-                });
-
-            modelBuilder.Entity("Proiect.Models.GymCategory", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
-
-                    b.Property<int>("CategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GymID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CategoryID");
-
-                    b.HasIndex("GymID");
-
-                    b.ToTable("GymCategory");
                 });
 
             modelBuilder.Entity("Proiect.Models.Trainer", b =>
@@ -203,8 +183,8 @@ namespace Proiect.Migrations
                         .HasForeignKey("ClientID");
 
                     b.HasOne("Proiect.Models.Gym", "Gym")
-                        .WithMany()
-                        .HasForeignKey("GymID");
+                        .WithOne("Borrowing")
+                        .HasForeignKey("Proiect.Models.Borrowing", "GymID");
 
                     b.Navigation("Client");
 
@@ -218,25 +198,6 @@ namespace Proiect.Migrations
                         .HasForeignKey("TrainerID");
 
                     b.Navigation("Trainer");
-                });
-
-            modelBuilder.Entity("Proiect.Models.GymCategory", b =>
-                {
-                    b.HasOne("Proiect.Models.Category", "Category")
-                        .WithMany("GymCategories")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Proiect.Models.Gym", "Gym")
-                        .WithMany("GymCategories")
-                        .HasForeignKey("GymID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Gym");
                 });
 
             modelBuilder.Entity("Proiect.Models.TrainerCategory", b =>
@@ -260,8 +221,6 @@ namespace Proiect.Migrations
 
             modelBuilder.Entity("Proiect.Models.Category", b =>
                 {
-                    b.Navigation("GymCategories");
-
                     b.Navigation("TrainerCategories");
                 });
 
@@ -272,7 +231,7 @@ namespace Proiect.Migrations
 
             modelBuilder.Entity("Proiect.Models.Gym", b =>
                 {
-                    b.Navigation("GymCategories");
+                    b.Navigation("Borrowing");
                 });
 
             modelBuilder.Entity("Proiect.Models.Trainer", b =>
