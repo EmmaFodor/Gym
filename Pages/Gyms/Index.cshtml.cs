@@ -19,12 +19,15 @@ namespace Proiect.Pages.Gyms
             _context = context;
         }
 
+
         public IList<Gym> Gym { get;set; } = default!;
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string searchString)
         {
             if (_context.Gym != null)
             {
+              
+
                 Gym = await _context.Gym
                     .Include(b => b.Trainer)
                     .ToListAsync();
