@@ -44,7 +44,7 @@ namespace Proiect.Pages.Gyms
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                GymD.Gyms = GymD.Gyms.Where(s => s.Name.Contains(searchString));
+                GymD.Gyms = GymD.Gyms.Where(s => s.Name.Contains(searchString) || s.Trainer.FullName.Contains(searchString));
             }
 
 
